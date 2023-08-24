@@ -34,7 +34,7 @@ const app = express();
 const port = 3000;
 
 // Simulated user data
-const userData = {
+let userData = {
     name: 'John Doe',
     age: 32,
     occupation: 'Developer',
@@ -102,4 +102,56 @@ export default ProfileScreen;
 Maintenant, lorsque vous naviguez vers le `ProfileScreen`, il devrait automatiquement obtenir et afficher les données d'utilisateur de notre API.
 
 
-**NB** : Dans une situation réelle, vous auriez à gérer les erreurs de réseau et à sécuriser votre API. Ce guide est simplifié pour une meilleure compréhension des concepts de base.re de visites est partagé entre ces deux écrans grâce au contexte.
+
+### Étape 6 : Ajout d'une route POST pour enregistrer les vues
+
+Nous allons maintenant ajouter une nouvelle route POST à notre serveur Node.js pour gérer l'ajout des vues de profil.
+
+Dans votre fichier `server.js`, ajoutez le code suivant :
+
+```javascript
+app.use(express.json());
+
+app.post('/profile/views', (req, res) => {
+    const { count } = req.body;
+    // Ajout du nombre de vues (simulé ici, mais dans une application réelle, vous enregistreriez cela dans une base de données)
+    userData.views = (userData.views || 0) + count;
+    res.json({ success: true });
+});
+```
+
+Ceci crée une nouvelle route POST qui accepte un paramètre `count` dans le corps de la requête et ajoute ce nombre aux vues de profil.
+
+### Étape 7 : Ajout d'une fonction pour effectuer une requête POST dans React Native
+
+Dans votre composant `ProfileScreen` de l'application React Native, nous allons ajouter une fonction qui effectue une requête POST à notre API pour enregistrer le nombre de vues.
+
+Ajoutez le code suivant dans `ProfileScreen.js` :
+
+```javascript
+const addViewCount = () => {
+    fetch('http://localhost:3000/profile/views', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ count }),
+    });
+};
+
+// ...
+
+<Button title="Ajouter vue" onPress={addViewCount} />
+```
+
+Cette fonction envoie une requête POST à notre API avec le nombre de visites actuel.
+
+### Étape 8 : Testez votre application
+
+Vous pouvez maintenant lancer votre serveur Node.js et tester l'application React Native. Naviguez vers le `ProfileScreen`, et vous devriez voir les données d'utilisateur et le bouton "Ajouter vue". En appuyant sur ce bouton, vous envoyez une requête POST à votre API, et le nombre de vues est mis à jour côté serveur.
+
+**NB** : Dans une application réelle, vous voudrez peut-être gérer les erreurs de réseau, afficher un message de succès ou d'échec, et mettre à jour l'interface utilisateur en conséquence. Ce guide est simplifié pour vous aider à comprendre les concepts de base de l'intégration d'une API dans React Native et Node.js.
+
+Ces étapes concluent l'exercice d'intégration d'une API simple dans une application React Native. 
+
+Vous avez appris à créer une API avec Node.js et Express, et comment interagir avec cette API depuis une application React Native.
